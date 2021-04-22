@@ -1,0 +1,45 @@
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+
+namespace UploadFileAzure
+{
+    public static class FileProcessFunctionUpload
+    {
+        [FunctionName("FileProcessFunctionUpload")]
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            ILogger log, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var formdata = await req.ReadFormAsync();
+                var stream = formdata.Files.GetFile("file").OpenReadStream();
+                var file = req.Form.Files["file"];
+
+                var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+                var blobServiceClient = new BlobServiceClient(connectionString);
+                var storage = new Storage(blobServiceClient);
+
+                await storage.UploadNewBlobAsync("files", file.FileName, stream, cancellationToken);
+
+                var list = await storage.ListBlobsInContainerAsync("files");
+
+                return new OkObjectResult(list);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex);
+            }
+        }
+    };
+}
+
