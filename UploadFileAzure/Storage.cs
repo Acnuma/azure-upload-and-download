@@ -69,13 +69,12 @@ namespace UploadFileAzure
 
         public async Task<List<string>> ListBlobsInContainerAsync(
             string containerName,
-            string prefix = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             List<string> stringList = new List<string>();
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
-            await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
+            await foreach (BlobItem blobItem in containerClient.GetBlobsAsync().WithCancellation(cancellationToken))
             {
                 stringList.Add(blobItem.Name);
             }

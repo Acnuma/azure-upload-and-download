@@ -17,6 +17,8 @@ namespace UploadFileAzure
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log, CancellationToken cancellationToken)
         {
+            log.LogInformation("Upload started");
+
             try
             {
                 var formdata = await req.ReadFormAsync();
@@ -29,7 +31,7 @@ namespace UploadFileAzure
 
                 await storage.UploadNewBlobAsync("files", file.FileName, stream, cancellationToken);
 
-                var list = await storage.ListBlobsInContainerAsync("files");
+                var list = await storage.ListBlobsInContainerAsync("files", cancellationToken);
 
                 return new OkObjectResult(list);
             }

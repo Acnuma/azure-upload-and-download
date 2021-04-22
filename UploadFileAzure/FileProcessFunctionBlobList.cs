@@ -17,13 +17,15 @@ namespace UploadFileAzure
            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log, CancellationToken cancellationToken)
         {
+            log.LogInformation("Blob list started");
+
             try
             {
                 var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
                 var blobServiceClient = new BlobServiceClient(connectionString);
                 var storage = new Storage(blobServiceClient);
 
-                var list = await storage.ListBlobsInContainerAsync("files");
+                var list = await storage.ListBlobsInContainerAsync("files", cancellationToken);
 
                 return new OkObjectResult(list);
             }

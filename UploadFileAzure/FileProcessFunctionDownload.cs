@@ -17,6 +17,8 @@ namespace UploadFileAzure
              [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
              ILogger log, CancellationToken cancellationToken)
         {
+            log.LogInformation("Download started");
+
             try
             {
                 string file = req.Query["file"];
