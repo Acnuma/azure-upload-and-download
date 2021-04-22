@@ -1,18 +1,15 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace UploadFileAzure
 {
-    class Storage
+    public class Storage
     {
         private readonly BlobServiceClient _blobServiceClient;
 
@@ -22,10 +19,10 @@ namespace UploadFileAzure
         }
 
         public async Task<bool> UploadNewBlobAsync(
-          string containerName,
-          string blobName,
-          Stream stream,
-          CancellationToken cancellationToken = default)
+            string containerName,
+            string blobName,
+            Stream stream,
+            CancellationToken cancellationToken = default)
         {
 
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
@@ -52,9 +49,9 @@ namespace UploadFileAzure
         }
 
         public async Task<BlobDownloadInfo> GetBlobAsync(
-        string containerName,
-        string blobName,
-        CancellationToken cancellationToken = default)
+            string containerName,
+            string blobName,
+            CancellationToken cancellationToken = default)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
@@ -62,7 +59,7 @@ namespace UploadFileAzure
             try
             {
                 var response = await blobClient.DownloadAsync(cancellationToken);
-                return response.Value; 
+                return response.Value;
             }
             catch (RequestFailedException exception) when (IsNotFound(exception))
             {
@@ -71,9 +68,9 @@ namespace UploadFileAzure
         }
 
         public async Task<List<string>> ListBlobsInContainerAsync(
-        string containerName,
-        string prefix = null,
-        CancellationToken cancellationToken = default)
+            string containerName,
+            string prefix = null,
+            CancellationToken cancellationToken = default)
         {
             List<string> stringList = new List<string>();
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
@@ -90,6 +87,6 @@ namespace UploadFileAzure
             exception.Status == (int)HttpStatusCode.PreconditionFailed;
 
         private static bool IsNotFound(RequestFailedException exception) =>
-        exception.Status == (int)HttpStatusCode.NotFound;
+            exception.Status == (int)HttpStatusCode.NotFound;
     }
 }

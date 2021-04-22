@@ -4,18 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace UploadFileAzure
 {
-    class FileProcessFunctionDownload
+    public static class FileProcessFunctionDownload
     {
         [FunctionName("FileProcessFunctionDownload")]
         public static async Task<IActionResult> Run(
